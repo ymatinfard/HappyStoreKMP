@@ -2,13 +2,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
@@ -31,6 +34,7 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import model.NetworkProduct
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import widgets.Category
 
 @Composable
 @Preview
@@ -38,7 +42,7 @@ fun App() {
 
     val viewModel = getViewModel(Unit, viewModelFactory { HappyStoreViewModel() })
 
-    val productState = viewModel.uiState.collectAsState().value
+    val productsState = viewModel.productsUiState.collectAsState().value
 
     MaterialTheme {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -46,16 +50,30 @@ fun App() {
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (productState.products.isEmpty()) {
+                print("Yousef ${productsState.categories.toString()}")
+                if (productsState.products.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
                 } else {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(productsState.categories.toList()) { category ->
+                            Category(
+                                category,
+                                isSelected = category == productsState.selectedCategory,
+                                viewModel::updateSelectedCategory
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.fillMaxWidth().width(6.dp))
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(productState.products) { product ->
+                        items(productsState.products) { product ->
                             ProductItem(product)
                         }
                     }
