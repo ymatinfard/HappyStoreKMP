@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -47,6 +48,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.kamel.media)
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.negotiation)
+            implementation(libs.ktor.client.serialization)
+            implementation(libs.kotlinx.serialization)
+            api(libs.mvvm.core)
+            api(libs.mvvm.compose)
         }
     }
 }
